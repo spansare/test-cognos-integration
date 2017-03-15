@@ -280,7 +280,10 @@ function callBack()
 	    	&nbsp;&nbsp;&nbsp;&nbsp;Report ID:&nbsp;&nbsp;<input size="40" id="storeID"><br><br>
 		  </td>
 		  <td align="left" width="40%">
-			<input type="submit" value="Report Output" onClick="/SimpleServlet"><br><br>
+		  	<form action="/SimpleServlet" method="get">
+		  		<input type="submit" value="Report Output">
+		  	</form>
+			<br><br>
 			<input type="submit" id="logoff" value="Logoff from IBM Cognos Server" onclick="doLogoff()"><br>
 		  </td>
 		</table>
