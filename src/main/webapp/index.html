@@ -1,25 +1,304 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>Java Web Starter Application</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<link rel="stylesheet" href="style.css" />
+ <!--
+  Licensed Materials - Property of IBM
+
+  IBM Cognos Products: DOCS
+
+  (C) Copyright IBM Corp. 2008, 2014
+
+  US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP
+  Schedule Contract with IBM Corp.
+ -->
+ <!--
+  * reportOutput.html
+  *
+  * Description: This file allows the user to pass the user credentials to IBM Cognos server,
+  *              retrieve the given report HTMLFragment output, and display report output.
+  */
+ -->
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Generic Authentication Sample</title>
+<script>
+
+var	myNameSpace=null;
+var myUserName=null;
+var myPassword=null;
+
+/*
+ * This creates the XMLHttpRequest object used to communicate with CMS.
+ * The initialization of the object depends on what browser is being used. This
+ * code is compatible with IE 5.5, 6, 7, 8 and all versions of Firefox and Chrome
+ *
+ * For more information on the XMLHttpRequest object, see http://www.w3.org/TR/XMLHttpRequest/
+ */
+try {
+  var objXHR = new XMLHttpRequest();
+  } catch (e) {
+    try {
+      var objXHR = new ActiveXObject('Msxml2.XMLHTTP');
+    } catch (e) {
+      try {
+        var objXHR = new ActiveXObject('Microsoft.XMLHTTP');
+      } catch (e) {
+        alert('XMLHttpRequest not supported'); }
+      }
+  }
+
+
+
+/*
+ * Starts running a given report asynchronously, using the storeID in the reportID form field.
+ * The DIV named fragment will be updated with the HTMLFragment recieved from CMS, and will be
+ * also used to display a status message while the report is running.
+ * The function callBack() will be called periodically by the XMLHttpRequest
+ * object as it runs, and when the report is complete.
+ *
+ * The CMS URL syntax used is as follows:
+ * http:<cognos gateway>/rds/pagedReportData/report/<storeID of the report>?fmt=HTMLFragment&version=LATEST&v=3
+ *
+ * The fmt=HTMLFragment option tells CMS to generate an HTML fragment
+ * The version=LATEST option tells CMS to use the last saved version of a report, or run it if none is available
+ *
+ * For more information on the CMS URL syntax, see "Chapter 6: Developing Mashup Applications using
+ * the REST Interface" in the IBM Cognos Mashup Service Developer Guide
+ */
+ function doReport()
+ {
+
+	myNameSpace=document.getElementById("nameSpace").value;
+   	myUserName=document.getElementById("userName").value;
+   	myPassword=document.getElementById("password").value;
+	var myReportID=document.getElementById("storeID").value;
+
+    var myFrag = document.getElementById("fragment");
+
+    if(myNameSpace==""||myUserName==""||myPassword=="")
+    {
+		myFrag.innerHTML="";
+		myFrag.innerHTML= "<HTML><BODY><b>Please enter Authentication information ....</b></BODY></HTML>";
+		return;
+    }
+
+    if(myReportID=="")
+    {
+        myFrag.innerHTML="";
+		myFrag.innerHTML= "<HTML><BODY><b>Please enter the Report ID ....</b></BODY></HTML>";
+		return;
+    }
+
+  var serverURL = "http://169.38.71.180/ibmcognos/bi/v1/disp";
+	var url = serverURL + "/rds/pagedReportData/report/" + document.getElementById("storeID").value + "?fmt=HTMLFragment&version=LATEST&v=3";
+
+	window.status = "Loading Report. Please wait....";
+	var frag = document.getElementById("fragment");
+	frag.innerHTML= "<HTML><BODY>Loading Report. Please wait....</BODY></HTML>";
+	try
+	{
+    doLogon();
+    //objXHR.open("GET", url, true);
+    //objXHR.setRequestHeader("Access-Control-Allow-Origin", "*");
+		//objXHR.onreadystatechange = callBack;
+		//objXHR.send(null);
+	}
+	catch (e)
+	{
+		alert("Error occurs when doing report.\r\n"+e);
+	}
+
+ }
+
+
+/*
+ * Logs into IBM Cognos Service using Mashup Service (CMS) Authentication Service
+ * Sends the login request synchronously.
+ *
+ */
+function doLogon()
+{
+
+    var xmlData =
+      "xmlData=<auth:credentials xmlns:auth='http://developer.cognos.com/schemas/ccs/auth/types/1'>"
+      +"<auth:credentialElements><auth:name>CAMNamespace</auth:name>"
+      +"<auth:value><auth:actualValue>"+myNameSpace+"</auth:actualValue></auth:value></auth:credentialElements>"
+      +"<auth:credentialElements><auth:name>CAMUsername</auth:name>"
+      +"<auth:value><auth:actualValue>"+myUserName+"</auth:actualValue></auth:value></auth:credentialElements>"
+      +"<auth:credentialElements><auth:name>CAMPassword</auth:name>"
+      +"<auth:value><auth:actualValue>"+myPassword+"</auth:actualValue></auth:value></auth:credentialElements>"
+      +"</auth:credentials>";
+
+	try
+	{
+		objXHR.open("POST", "http://169.38.71.180/ibmcognos/bi/v1/disp" + "/rds/auth/logon", true);
+		objXHR.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+		objXHR.setRequestHeader("Content-length",xmlData.length);
+    objXHR.withCredentails = true;
+		objXHR.setRequestHeader("Connection","close");
+    objXHR.onreadystatechange = callBack;
+		objXHR.send(xmlData);
+
+		/*if(objXHR.status == 200)
+		{
+
+			// Processes the response from the CMS Authentication service.
+			// If we recieve an "accountInfo" element back, we have successfully logged in.
+			var accountInfo = objXHR.responseXML.getElementsByTagName("auth:accountInfo");
+
+			if (accountInfo.length > 0)
+			{
+				//doReport();
+			}
+			else
+			{
+				//Otherwise, prompt error message
+				alert("Error occurs when doing logon. Please check input credentials.");
+
+				return;
+			}
+		}
+		else
+		{
+			showError(objXHR.responseText);
+			window.status = "Done";
+		}*/
+	}
+	catch (e)
+	{
+		alert("Error occurs when doing logon.\r\n"+e);
+	}
+
+}
+
+
+/*
+ * Displays an error message in a DIV
+ *
+ */
+function showError(msg)
+{
+	var frag = document.getElementById("fragment");
+	frag.innerHTML= "Complete";
+	frag.style.visibility = "hidden";
+	var errorDiv = document.getElementById("error")
+	errorDiv.innerHTML= msg;
+	errorDiv.style.visibility = "visible";
+}
+
+
+/*
+ * Logs off IBM Cognos Service using Mashup Service (CMS) Authentication Service
+ *
+ */
+function doLogoff()
+{
+	try
+	{
+		objXHR.open("POST", "http://169.38.71.180/ibmcognos/bi/v1/disp" + "/rds/auth/logoff", false);
+		objXHR.send(null);
+		checkLogoffStatus();
+	}
+	catch (e)
+	{
+		alert("Error occurs when doing logoff.\r\n"+e);
+	}
+}
+
+
+/*
+ * When readyState=4 and the HTTP status code of 200 are returned. CMS successfully logs off IBM Cognos Server.
+ *
+ */
+function checkLogoffStatus()
+{
+	if(objXHR.readyState == 4 && objXHR.status == 200)
+	{
+		window.status = "Successfully log off IBM Cognos Service.";
+	}
+    else
+	{
+		var frag = document.getElementById("fragment");
+		frag.innerHTML = objXHR.responseText;
+		alert("HTTP ERROR " + objXHR.status + ": " + objXHR.statusText);
+		window.status = "Done";
+	}
+}
+
+
+/*
+ * This method is called when the states changes in the XMLHttpRequest object. When readyState=4,
+ * the XMLHttpRequest object has finished sending and receiving the request.
+ *
+ * If the HTTP status code of 200 is returned, CMS successfully ran the report and the DIV is updated with
+ * the HTML fragment.
+ *
+ * If the HTTP status code of 403 is returned, Authentication is required and the logon dialog will be displayed.
+ *
+ * For any other HTTP status code (generally an error), an alert box will display the status code and message
+ */
+function callBack()
+{
+	if (objXHR.readyState == 4)
+	{
+
+		if (objXHR.status == 200)
+		{
+			var frag = document.getElementById("fragment");
+			frag.innerHTML = objXHR.responseText;
+			window.status = "Done";
+
+		}
+		/*else if (objXHR.status == 403)
+		{
+			doLogon();
+		}*/
+		else
+		{
+			var frag = document.getElementById("fragment");
+			frag.innerHTML = objXHR.responseText;
+			alert("HTTP ERROR " + objXHR.status + ": " + objXHR.statusText);
+			window.status = "Done";
+		}
+	}
+}
+
+
+</script>
 </head>
-<body>
-	<table>
+<body style="font-family: Verdana, Arial, Sans-Serif; font-weight: normal"><br />
+<table align="center" width="95%"
+	style="border-bottom-style: solid; border-top-style: solid; border-left-color: #004080; border-top-color: #004080; border-right-color: #004080; border-left-style: solid; border-right-style: solid; border-bottom-color: #004080; border-bottom-width: thin; border-right-width: thin; border-left-width: thin; border-top-width: thin">
+	<thead>
 		<tr>
-			<td style='width: 30%;'>
-				<img class = "newappIcon" src='images/newapp-icon.png'>
-			</td>
-			<td>
-				<!-- The "Hello World!" message comes from /SimpleServlet -->
-				<h1 id = "message"></h1>
-				
-				<p class='description'></p> Thanks for creating a <span class="blue">Liberty for Java Starter Application</span>.
-			</td>
+			<td
+				style="text-align: center; color: #FFFFFF; font-weight: bold; background-color: #0080C0">CMS
+			Authentication Sample</td>
 		</tr>
-	</table>
-	<!-- Call SimpleServlet to get the "Hello World" message  -->
-	<script type="text/javascript" src="index.js"></script>
+	</thead>
+	<tr>
+	  <td>
+		<table width="100%">
+		  <td align="left" width="60%">
+            Name Space:&nbsp;&nbsp;<input type="text" size="40", id="nameSpace"><br><br>
+	        &nbsp;&nbsp;User Name:&nbsp;&nbsp;<input type="text" size="40", id="userName"><br><br>
+	    	&nbsp;&nbsp;&nbsp;&nbsp;Password:&nbsp;&nbsp;<input type="password" size="40", id="password"><br><br>
+	    	&nbsp;&nbsp;&nbsp;&nbsp;Report ID:&nbsp;&nbsp;<input size="40" id="storeID"><br><br>
+		  </td>
+		  <td align="left" width="40%">
+			<input type="button" value="Report Output" onClick="doReport()"><br><br>
+			<input type="button" id="logoff" value="Logoff from IBM Cognos Server" onclick="doLogoff()"><br>
+		  </td>
+		</table>
+	  </td>
+	</tr>
+	<tr>
+	  <td
+		style="border-top-style: dashed; border-top-color: #000000; border-top-width: medium; border-bottom-style: dashed; border-bottom-width: medium; border-bottom-color: #000000"
+			height="100%">
+		<DIV id="fragment" style="height: 100%; width: 100%">Your report will appear here</DIV>
+    <DIV id="error" style="height: 100%; width: 100%;display:none;">error</DIV>
+	  </td>
+	</tr>
+</table>
 </body>
 </html>
