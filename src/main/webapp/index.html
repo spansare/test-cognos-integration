@@ -88,19 +88,16 @@ try {
 		return;
     }
 
-  var serverURL = "http://169.38.71.180/ibmcognos/bi/v1/disp";
-	var url = serverURL + "/rds/pagedReportData/report/" + document.getElementById("storeID").value + "?fmt=HTMLFragment&version=LATEST&v=3";
+	var url = "http://169.38.71.180/ibmcognos/bi/v1/disp" + "/rds/pagedReportData/report/" + document.getElementById("storeID").value + "?fmt=HTML&version=LATEST&v=3";
 
 	window.status = "Loading Report. Please wait....";
 	var frag = document.getElementById("fragment");
 	frag.innerHTML= "<HTML><BODY>Loading Report. Please wait....</BODY></HTML>";
 	try
 	{
-    doLogon();
-    //objXHR.open("GET", url, true);
-    //objXHR.setRequestHeader("Access-Control-Allow-Origin", "*");
-		//objXHR.onreadystatechange = callBack;
-		//objXHR.send(null);
+		objXHR.open("GET", url, true);
+		objXHR.onreadystatechange = callBack;
+		objXHR.send(null);
 	}
 	catch (e)
 	{
@@ -130,24 +127,22 @@ function doLogon()
 
 	try
 	{
-		objXHR.open("POST", "http://169.38.71.180/ibmcognos/bi/v1/disp" + "/rds/auth/logon", true);
+		objXHR.open("POST", "http://169.38.71.180/ibmcognos/bi/v1/disp" + "/rds/auth/logon", false);
 		objXHR.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 		objXHR.setRequestHeader("Content-length",xmlData.length);
-    objXHR.withCredentails = true;
 		objXHR.setRequestHeader("Connection","close");
-    objXHR.onreadystatechange = callBack;
 		objXHR.send(xmlData);
 
-		/*if(objXHR.status == 200)
+		if(objXHR.status == 200)
 		{
 
 			// Processes the response from the CMS Authentication service.
 			// If we recieve an "accountInfo" element back, we have successfully logged in.
-			var accountInfo = objXHR.responseXML.getElementsByTagName("auth:accountInfo");
+			var accountInfo = objXHR.responseXML.childNodes;
 
 			if (accountInfo.length > 0)
 			{
-				//doReport();
+				doReport();
 			}
 			else
 			{
@@ -159,9 +154,9 @@ function doLogon()
 		}
 		else
 		{
-			showError(objXHR.responseText);
+			showError(objXJR.responseText);
 			window.status = "Done";
-		}*/
+		}
 	}
 	catch (e)
 	{
@@ -180,9 +175,9 @@ function showError(msg)
 	var frag = document.getElementById("fragment");
 	frag.innerHTML= "Complete";
 	frag.style.visibility = "hidden";
-	var errorDiv = document.getElementById("error")
-	errorDiv.innerHTML= msg;
-	errorDiv.style.visibility = "visible";
+	frag = document.getElementById("error")
+	frag.innerHTML= msg;
+	frag.style.visibility = "visible";
 }
 
 
@@ -248,10 +243,10 @@ function callBack()
 			window.status = "Done";
 
 		}
-		/*else if (objXHR.status == 403)
+		else if (objXHR.status == 403)
 		{
 			doLogon();
-		}*/
+		}
 		else
 		{
 			var frag = document.getElementById("fragment");
@@ -285,8 +280,8 @@ function callBack()
 	    	&nbsp;&nbsp;&nbsp;&nbsp;Report ID:&nbsp;&nbsp;<input size="40" id="storeID"><br><br>
 		  </td>
 		  <td align="left" width="40%">
-			<input type="button" value="Report Output" onClick="doReport()"><br><br>
-			<input type="button" id="logoff" value="Logoff from IBM Cognos Server" onclick="doLogoff()"><br>
+			<input type="submit" value="Report Output" onClick="doReport()"><br><br>
+			<input type="submit" id="logoff" value="Logoff from IBM Cognos Server" onclick="doLogoff()"><br>
 		  </td>
 		</table>
 	  </td>
@@ -296,7 +291,6 @@ function callBack()
 		style="border-top-style: dashed; border-top-color: #000000; border-top-width: medium; border-bottom-style: dashed; border-bottom-width: medium; border-bottom-color: #000000"
 			height="100%">
 		<DIV id="fragment" style="height: 100%; width: 100%">Your report will appear here</DIV>
-    <DIV id="error" style="height: 100%; width: 100%;display:none;">error</DIV>
 	  </td>
 	</tr>
 </table>
