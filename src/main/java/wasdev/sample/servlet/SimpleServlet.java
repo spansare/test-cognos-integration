@@ -59,11 +59,13 @@ public class SimpleServlet extends HttpServlet {
 		HttpResponse response1 = client.execute(request1);
 		BufferedReader rd1 = new BufferedReader (new InputStreamReader(response1.getEntity().getContent()));
 		System.out.println(response1.toString());
+		StringBuilder str = new StringBuilder();
 		line = "";
 		while ((line = rd1.readLine()) != null) {
 			System.out.println(line);
+			str.append(line);
 		}
-		response.getWriter().print(rd1.toString());
+		response.getWriter().print(str);
 		
     }
 
