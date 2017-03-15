@@ -31,7 +31,7 @@ public class SimpleServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
-        response.getWriter().print("Hello World!");
+        //response.getWriter().print("Hello World!");
         
         HttpClient client = new DefaultHttpClient();
 		HttpPost post = new HttpPost("http://169.38.71.180/ibmcognos/bi/v1/disp/rds/auth/logon");
@@ -63,6 +63,8 @@ public class SimpleServlet extends HttpServlet {
 		while ((line = rd1.readLine()) != null) {
 			System.out.println(line);
 		}
+		response.getWriter().print(rd1.toString());
+		
     }
 
 }
