@@ -43,9 +43,9 @@ public class SimpleServlet extends HttpServlet {
 		post.addHeader("Connection", "close");
 		post.setEntity(input);
 		
-		HttpResponse response = client.execute(post);
+		HttpResponse response_new = client.execute(post);
 		
-		BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+		BufferedReader rd = new BufferedReader(new InputStreamReader(response_new.getEntity().getContent()));
 		
 		String line = "";
 		
