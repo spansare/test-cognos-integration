@@ -50,14 +50,14 @@ try {
  function doReport()
  {
 	
-	xhttp.onreadystatechange = function() {
+	 objXHR.onreadystatechange = function() {
 	    if (this.readyState == 4 && this.status == 200) {
 	    	document.getElementById("fragment").innerHTML = this.responseText;
 	    }
   	};
   	
-  	xhttp.open("GET", "/SimpleServlet", true);
-  	xhttp.send();
+  	objXHR.open("GET", "/SimpleServlet", true);
+  	objXHR.send();
 
  }
 
