@@ -19,7 +19,7 @@ public class VCAPUtils {
 		
 		if(VCAP_SERVICES != null) {
 			try {
-				JSONObject jsonObj = (JSONObject) JSONObject.stringToValue(VCAP_SERVICES);
+				JSONObject jsonObj = new JSONObject(VCAP_SERVICES);
 				
 				System.out.println("jsonObj : " + jsonObj);
 				
