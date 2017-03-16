@@ -36,10 +36,14 @@ public class SimpleServlet extends HttpServlet {
         //response.getWriter().print("Hello World!");
         
         VCAPUtils vcap = new VCAPUtils();
+        String serverUrl = vcap.getRest_url();
+        String namespace = vcap.getNamespace();
+        String username = vcap.getUsername();
+        String password = vcap.getPassword();
         
         HttpClient client = new DefaultHttpClient();
-		HttpPost post = new HttpPost("http://169.38.71.180/ibmcognos/bi/v1/disp/rds/auth/logon");
-		StringEntity input = new StringEntity("xmlData=<auth:credentials xmlns:auth='http://developer.cognos.com/schemas/ccs/auth/types/1'><auth:credentialElements><auth:name>CAMNamespace</auth:name><auth:value><auth:actualValue>IBMDemoAD</auth:actualValue></auth:value></auth:credentialElements><auth:credentialElements><auth:name>CAMUsername</auth:name><auth:value><auth:actualValue>snehal</auth:actualValue></auth:value></auth:credentialElements><auth:credentialElements><auth:name>CAMPassword</auth:name><auth:value><auth:actualValue>IBMDem0s</auth:actualValue></auth:value></auth:credentialElements></auth:credentials>");
+		HttpPost post = new HttpPost(serverUrl + "/rds/auth/logon");
+		StringEntity input = new StringEntity("xmlData=<auth:credentials xmlns:auth='http://developer.cognos.com/schemas/ccs/auth/types/1'><auth:credentialElements><auth:name>CAMNamespace</auth:name><auth:value><auth:actualValue>" + namespace +"</auth:actualValue></auth:value></auth:credentialElements><auth:credentialElements><auth:name>CAMUsername</auth:name><auth:value><auth:actualValue>" + username + "</auth:actualValue></auth:value></auth:credentialElements><auth:credentialElements><auth:name>CAMPassword</auth:name><auth:value><auth:actualValue>" + password + "</auth:actualValue></auth:value></auth:credentialElements></auth:credentials>");
 		post.addHeader("Content-type", "application/x-www-form-urlencoded");
 		//post.addHeader("Content-length", "576");
 		post.addHeader("Connection", "close");
@@ -59,7 +63,7 @@ public class SimpleServlet extends HttpServlet {
 		System.out.println("\n\n\n");
 
 		
-		HttpGet request1 = new HttpGet("http://169.38.71.180/ibmcognos/bi/v1/disp/rds/pagedReportData/report/i0715EBA050954FB7A5F4917783FEE9F7?fmt=HTML&version=LATEST&v=3");
+		HttpGet request1 = new HttpGet(serverUrl + "/rds/pagedReportData/report/i0715EBA050954FB7A5F4917783FEE9F7?fmt=HTML&version=LATEST&v=3");
 		HttpResponse response1 = client.execute(request1);
 		BufferedReader rd1 = new BufferedReader (new InputStreamReader(response1.getEntity().getContent()));
 		System.out.println(response1.toString());

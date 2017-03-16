@@ -43,7 +43,7 @@ public class VCAPUtils {
 				System.out.println("creds : " + creds);
 				
 				host = creds.getString("host");
-				rest_url = creds.getString("rest_url");
+				rest_url = creds.getString("rest_uri");
 				namespace = creds.getString("namespace");
 				username = creds.getString("username");
 				password = creds.getString("password");
