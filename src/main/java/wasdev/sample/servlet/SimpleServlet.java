@@ -18,6 +18,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import wasdev.samples.utils.VCAPUtils;
+
 /**
  * Servlet implementation class SimpleServlet
  */
@@ -32,6 +34,8 @@ public class SimpleServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         //response.getWriter().print("Hello World!");
+        
+        VCAPUtils vcap = new VCAPUtils();
         
         HttpClient client = new DefaultHttpClient();
 		HttpPost post = new HttpPost("http://169.38.71.180/ibmcognos/bi/v1/disp/rds/auth/logon");
