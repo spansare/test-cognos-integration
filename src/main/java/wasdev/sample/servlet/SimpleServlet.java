@@ -63,7 +63,7 @@ public class SimpleServlet extends HttpServlet {
 		System.out.println("\n\n\n");
 
 		
-		HttpGet request1 = new HttpGet(serverUrl + "/rds/pagedReportData/report/i0715EBA050954FB7A5F4917783FEE9F7?fmt=HTML&version=LATEST&v=3");
+		HttpGet request1 = new HttpGet(serverUrl + "/rds/pagedReportData/report/i​A57559C8E344428B82B257A7BBDD58B0?fmt=HTML&version=LATEST&v=3");
 		HttpResponse response1 = client.execute(request1);
 		BufferedReader rd1 = new BufferedReader (new InputStreamReader(response1.getEntity().getContent()));
 		System.out.println(response1.toString());
