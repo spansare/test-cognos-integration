@@ -44,12 +44,14 @@ public class SimpleServlet extends HttpServlet {
         HttpClient client = new DefaultHttpClient();
 		HttpPost post = new HttpPost(serverUrl + "/rds/auth/logon");
 		StringEntity input = new StringEntity("xmlData=<auth:credentials xmlns:auth='http://developer.cognos.com/schemas/ccs/auth/types/1'><auth:credentialElements><auth:name>CAMNamespace</auth:name><auth:value><auth:actualValue>" + namespace +"</auth:actualValue></auth:value></auth:credentialElements><auth:credentialElements><auth:name>CAMUsername</auth:name><auth:value><auth:actualValue>" + username + "</auth:actualValue></auth:value></auth:credentialElements><auth:credentialElements><auth:name>CAMPassword</auth:name><auth:value><auth:actualValue>" + password + "</auth:actualValue></auth:value></auth:credentialElements></auth:credentials>");
-		post.addHeader("Content-type", "application/x-www-form-urlencoded");
+		System.out.println("snehal : input : " + input);
+	    	post.addHeader("Content-type", "application/x-www-form-urlencoded");
 		//post.addHeader("Content-length", "576");
 		post.addHeader("Connection", "close");
 		post.setEntity(input);
 		
 		HttpResponse response_new = client.execute(post);
+	    	System.out.println("executed authentication call");
 		
 		BufferedReader rd = new BufferedReader(new InputStreamReader(response_new.getEntity().getContent()));
 		
@@ -60,10 +62,10 @@ public class SimpleServlet extends HttpServlet {
 			System.out.println(line);
 		}
 		
-		System.out.println("\n\n\n");
+		System.out.println("Call report...\n\n\n");
 
 		
-		HttpGet request1 = new HttpGet(serverUrl + "/rds/pagedReportData/report/i​A57559C8E344428B82B257A7BBDD58B0?fmt=HTML&version=LATEST&v=3");
+		HttpGet request1 = new HttpGet(serverUrl + "/rds/pagedReportData/report/iA57559C8E344428B82B257A7BBDD58B0?fmt=HTML&version=LATEST&v=3");
 		HttpResponse response1 = client.execute(request1);
 		BufferedReader rd1 = new BufferedReader (new InputStreamReader(response1.getEntity().getContent()));
 		System.out.println(response1.toString());
